@@ -1,13 +1,30 @@
 package org.firstinspires.ftc.teamcode.commands;
 
-import com.arcrobotics.ftclib.command.InstantCommand;
+import com.arcrobotics.ftclib.command.CommandBase;
+import org.firstinspires.ftc.teamcode.subsystems.ArmAngleSubsystem;
 
-import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
+public class ArmAngleCommand extends CommandBase {
+    private final ArmAngleSubsystem thisArmAngle;
+    private final int thisTarget;
 
-public class ArmAngleCommand extends InstantCommand {
-    public ArmAngleCommand(int target) {
+    public ArmAngleCommand(ArmAngleSubsystem armAngle, int target) {
+        /*
         super(
                 () -> RobotHardware.getInstance().armAngle.setPosition(target)
         );
+        */
+
+        this.thisArmAngle=armAngle;
+        this.thisTarget=target;
+    }
+
+    @Override
+    public void initialize() {
+        thisArmAngle.setPosition(thisTarget);
+    }
+
+    @Override
+    public boolean isFinished() {
+        return thisArmAngle.reachedTarget();
     }
 }

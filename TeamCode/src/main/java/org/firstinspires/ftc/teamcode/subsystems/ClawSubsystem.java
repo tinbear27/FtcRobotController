@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.Constants.Arm.Claw;
 
 public class ClawSubsystem extends SubsystemBase {
     private final Servo clawServo;
-    private double currentPosition;
 
     public ClawSubsystem(final HardwareMap hMap) {
         clawServo = hMap.get(Servo.class, Claw.CLAW_ID);
@@ -27,11 +26,10 @@ public class ClawSubsystem extends SubsystemBase {
     }
 
     public void setPosition(double position) {
-        this.currentPosition=position;
         clawServo.setPosition(position);
     }
 
     public double getPosition() {
-        return currentPosition;
+        return clawServo.getPosition();
     }
 }

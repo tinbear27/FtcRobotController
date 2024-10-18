@@ -4,14 +4,18 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Constants.Arm.Winch;
+import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.utility.MathUtility;
 
 public class ArmWinchSubsystem extends SubsystemBase {
     private final DcMotorEx winchMotor;
     private int currentTarget=0;
 
     public ArmWinchSubsystem(final HardwareMap hMap) {
-        winchMotor = hMap.get(DcMotorEx.class, Winch.WINCH_ID);
+        this.winchMotor = hMap.get(DcMotorEx.class, Winch.WINCH_ID);
         winchMotor.setDirection(Winch.WINCH_DIRECTION);
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -34,5 +38,25 @@ public class ArmWinchSubsystem extends SubsystemBase {
 
     public int getTarget() {
         return currentTarget;
+    }
+
+    //Extension ratio (0=fully retracted, 1=fully extended)
+    public double getExtensionRatio() {
+        return MathUtility.clamp((double) (getPosition() - Winch.WINCH_POSITION_MIN) /(Winch.WINCH_POSITION_MAX-Winch.WINCH_POSITION_MIN),0.0,1.0);
+    }
+
+    @Override
+    public void periodic() {
+        if (winchMotor.isBusy()) {
+            winchMotor.setPower(Winch.WINCH_POWER);
+        } else {
+            double ffPower=Winch.WINCH_FF_EXTENSION*getExtensionRatio()+Winch.WINCH_FF_ANGLE*Math.sin(Math.toRadians(RobotHardware.getInstance().armAngle.getPosition()/Constants.Arm.Angle.TICKS_PER_DEGREE));
+            if(ffPower<0.01) { ffPower=0.0; }
+            winchMotor.setPower(ffPower);
+        }
+    }
+
+    public boolean reachedTarget() {
+        return (Math.abs(getPosition()-currentTarget)< Winch.WINCH_POSITION_TOLERANCE);
     }
 }

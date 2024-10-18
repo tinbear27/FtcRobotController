@@ -24,6 +24,6 @@ public class WristSubsystem extends SubsystemBase {
     }
 
     public double getPosition() {
-        return currentPosition;
+        return wristServo.getPosition();
     }
 }
