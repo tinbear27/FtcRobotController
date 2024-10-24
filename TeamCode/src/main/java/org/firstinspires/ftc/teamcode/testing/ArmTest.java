@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
 import com.arcrobotics.ftclib.controller.PIDController;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -17,6 +18,7 @@ import org.firstinspires.ftc.teamcode.utility.MotionProfile;
 import org.firstinspires.ftc.teamcode.utility.MotionProfileState;
 import org.firstinspires.ftc.teamcode.utility.MathUtility;
 
+@Disabled
 @Config
 @TeleOp(name = "Arm Test", group = "TESTING")
 public class ArmTest extends LinearOpMode {

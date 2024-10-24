@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.Constants.Arm.Winch;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
@@ -12,14 +13,18 @@ import org.firstinspires.ftc.teamcode.utility.MathUtility;
 
 public class ArmWinchSubsystem extends SubsystemBase {
     private final DcMotorEx winchMotor;
+    private final Telemetry thisTelemetry;
+
     private int currentTarget=0;
 
-    public ArmWinchSubsystem(final HardwareMap hMap) {
+    public ArmWinchSubsystem(final HardwareMap hMap, Telemetry telemetry) {
         this.winchMotor = hMap.get(DcMotorEx.class, Winch.WINCH_ID);
         winchMotor.setDirection(Winch.WINCH_DIRECTION);
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         winchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        this.thisTelemetry=telemetry;
     }
 
     public void setPositionByIndex(int indexNum) {

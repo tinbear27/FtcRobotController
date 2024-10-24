@@ -10,7 +10,6 @@ import org.firstinspires.ftc.teamcode.commandgroups.AutonBasketReadyCommandGroup
 import org.firstinspires.ftc.teamcode.commandgroups.AutonParkTouchCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.AutonSampleGrabCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.AutonSampleReadyCommandGroup;
-import org.firstinspires.ftc.teamcode.hardware.Drivetrain;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 
@@ -32,7 +31,7 @@ public class AutonSamples extends LinearOpMode {
     State currentState = State.IDLE;
 
     private final RobotHardware robot = RobotHardware.getInstance();
-    private Drivetrain drive;
+    //private Drivetrain drive;
 
     //Define our start position (against wall, facing right, back of robot lined up with tile teeth near net zone tape)
     Pose2d startPose = new Pose2d(-39, -63, Math.toRadians(0));
@@ -50,19 +49,20 @@ public class AutonSamples extends LinearOpMode {
     double delaySampleGrab=0.7;
 
     private double loopTime = 0.0;
+    private boolean armAngleModeFixed=false;
 
     @Override
     public void runOpMode() throws InterruptedException {
         CommandScheduler.getInstance().reset();
 
-        robot.init(hardwareMap);
-        this.drive = new Drivetrain(hardwareMap);
+        robot.init(hardwareMap,telemetry);
+        //this.drive = new Drivetrain(hardwareMap);
 
         //Set starting pose
-        drive.setPoseEstimate(startPose);
+        robot.drive.setPoseEstimate(startPose);
 
         //Define all trajectories
-        TrajectorySequence trajectory1=drive.trajectorySequenceBuilder(startPose)
+        TrajectorySequence trajectory1=robot.drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonBasketReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -74,7 +74,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delayBasketDrop)
                 .build();
 
-        TrajectorySequence trajectory2=drive.trajectorySequenceBuilder(basketPose)
+        TrajectorySequence trajectory2=robot.drive.trajectorySequenceBuilder(basketPose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonSampleReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -86,7 +86,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delaySampleGrab)
                 .build();
 
-        TrajectorySequence trajectory3=drive.trajectorySequenceBuilder(rightSamplePose)
+        TrajectorySequence trajectory3=robot.drive.trajectorySequenceBuilder(rightSamplePose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonBasketReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -98,7 +98,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delayBasketDrop)
                 .build();
 
-        TrajectorySequence trajectory4=drive.trajectorySequenceBuilder(basketPose)
+        TrajectorySequence trajectory4=robot.drive.trajectorySequenceBuilder(basketPose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonSampleReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -110,7 +110,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delaySampleGrab)
                 .build();
 
-        TrajectorySequence trajectory5=drive.trajectorySequenceBuilder(centerSamplePose)
+        TrajectorySequence trajectory5=robot.drive.trajectorySequenceBuilder(centerSamplePose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonBasketReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -122,7 +122,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delayBasketDrop)
                 .build();
 
-        TrajectorySequence trajectory6=drive.trajectorySequenceBuilder(basketPose)
+        TrajectorySequence trajectory6=robot.drive.trajectorySequenceBuilder(basketPose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonSampleReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -134,7 +134,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delaySampleGrab)
                 .build();
 
-        TrajectorySequence trajectory7=drive.trajectorySequenceBuilder(leftSamplePose)
+        TrajectorySequence trajectory7=robot.drive.trajectorySequenceBuilder(leftSamplePose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonBasketReadyCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
                 })
@@ -146,7 +146,7 @@ public class AutonSamples extends LinearOpMode {
                 .waitSeconds(delayBasketDrop)
                 .build();
 
-        TrajectorySequence trajectory8=drive.trajectorySequenceBuilder(basketPose)
+        TrajectorySequence trajectory8=robot.drive.trajectorySequenceBuilder(basketPose)
                 .lineToLinearHeading(parkPose)
                 .addDisplacementMarker(() -> {
                     CommandScheduler.getInstance().schedule(new AutonParkTouchCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
@@ -164,7 +164,7 @@ public class AutonSamples extends LinearOpMode {
 
         robot.armAngle.setActiveRunMode(); //Change arm angle motor back to correct runmode
         currentState = State.TRAJ_1;
-        drive.followTrajectorySequenceAsync(trajectory1);
+        robot.drive.followTrajectorySequenceAsync(trajectory1);
 
         while (opModeIsActive() && !isStopRequested()) {
             CommandScheduler.getInstance().run();
@@ -172,49 +172,49 @@ public class AutonSamples extends LinearOpMode {
 
             switch (currentState) {
                 case TRAJ_1:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_2;
-                        drive.followTrajectorySequenceAsync(trajectory2);
+                        robot.drive.followTrajectorySequenceAsync(trajectory2);
                     }
                     break;
                 case TRAJ_2:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_3;
-                        drive.followTrajectorySequenceAsync(trajectory3);
+                        robot.drive.followTrajectorySequenceAsync(trajectory3);
                     }
                     break;
                 case TRAJ_3:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_4;
-                        drive.followTrajectorySequenceAsync(trajectory4);
+                        robot.drive.followTrajectorySequenceAsync(trajectory4);
                     }
                     break;
                 case TRAJ_4:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_5;
-                        drive.followTrajectorySequenceAsync(trajectory5);
+                        robot.drive.followTrajectorySequenceAsync(trajectory5);
                     }
                     break;
                 case TRAJ_5:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_6;
-                        drive.followTrajectorySequenceAsync(trajectory6);
+                        robot.drive.followTrajectorySequenceAsync(trajectory6);
                     }
                     break;
                 case TRAJ_6:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_7;
-                        drive.followTrajectorySequenceAsync(trajectory7);
+                        robot.drive.followTrajectorySequenceAsync(trajectory7);
                     }
                     break;
                 case TRAJ_7:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.TRAJ_8;
-                        drive.followTrajectorySequenceAsync(trajectory8);
+                        robot.drive.followTrajectorySequenceAsync(trajectory8);
                     }
                     break;
                 case TRAJ_8:
-                    if(!drive.isBusy()) {
+                    if(!robot.drive.isBusy()) {
                         currentState=State.IDLE;
                     }
                     break;
@@ -222,10 +222,11 @@ public class AutonSamples extends LinearOpMode {
                     break;
             }
 
-            drive.update();
+            robot.drive.update();
 
-            // Read current pose
-            Pose2d poseEstimate = drive.getPoseEstimate();
+            // Read current pose and save to storage
+            Pose2d poseEstimate = robot.drive.getPoseEstimate();
+            RobotHardware.currentPose = poseEstimate;
 
             // Print pose to telemetry
             double loop = System.nanoTime();

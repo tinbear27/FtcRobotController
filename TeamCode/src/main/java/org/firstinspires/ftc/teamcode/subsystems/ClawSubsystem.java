@@ -4,13 +4,16 @@ import com.arcrobotics.ftclib.command.SubsystemBase;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants.Arm.Claw;
 
 public class ClawSubsystem extends SubsystemBase {
     private final Servo clawServo;
+    private final Telemetry thisTelemetry;
 
-    public ClawSubsystem(final HardwareMap hMap) {
+    public ClawSubsystem(final HardwareMap hMap, Telemetry telemetry) {
         clawServo = hMap.get(Servo.class, Claw.CLAW_ID);
+        this.thisTelemetry=telemetry;
     }
 
     public void grab() {

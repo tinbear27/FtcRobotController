@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
 import org.firstinspires.ftc.teamcode.Constants.Arm.Angle;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.utility.MathUtility;
@@ -16,6 +17,7 @@ import org.firstinspires.ftc.teamcode.utility.MotionProfileState;
 public class ArmAngleSubsystem extends SubsystemBase {
 
     private final DcMotorEx angleMotor;
+    private final Telemetry thisTelemetry;
 
     private MotionProfile angleProfile;
     private MotionProfileState angleState;
@@ -28,11 +30,14 @@ public class ArmAngleSubsystem extends SubsystemBase {
     private double angleFeedforward=0.0;
     private int currentAnglePosition=0;
 
-    public ArmAngleSubsystem(final HardwareMap hMap) {
+    public ArmAngleSubsystem(final HardwareMap hMap, Telemetry telemetry) {
         angleMotor = hMap.get(DcMotorEx.class, Angle.ANGLE_ID);
         angleMotor.setDirection(Angle.ANGLE_DIRECTION);
+        angleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         this.controller = new PIDController(Angle.p, Angle.i, Angle.d);
+
+        this.thisTelemetry=telemetry;
     }
 
     public void setPositionByIndex(int indexNum) {
@@ -44,7 +49,10 @@ public class ArmAngleSubsystem extends SubsystemBase {
             this.angleTargetPosition = position;
 
             this.angleProfile = new MotionProfile(currentAnglePosition, angleTargetPosition, Angle.ANGLE_PROFILE_ACCEL, Angle.ANGLE_PROFILE_DECEL, Angle.ANGLE_PROFILE_VELO);
-            this.timer.reset();
+
+            if (timer != null) {
+                this.timer.reset();
+            }
         }
     }
 
@@ -71,6 +79,7 @@ public class ArmAngleSubsystem extends SubsystemBase {
 
         //Calculate feedforward
         angleFeedforward=Math.cos(Math.toRadians(currentAnglePosition/Angle.TICKS_PER_DEGREE))*(Angle.ANGLE_FF_RETRACTED+(RobotHardware.getInstance().armWinch.getExtensionRatio()*(Angle.ANGLE_FF_EXTENDED-Angle.ANGLE_FF_RETRACTED)));
+        thisTelemetry.addData("Arm Angle FF:",angleFeedforward);
 
         //Calculate power using PID and Feedforward
         double pidPower=controller.calculate(currentAnglePosition, anglePidTarget);
@@ -79,6 +88,8 @@ public class ArmAngleSubsystem extends SubsystemBase {
 
         //Apply power
         angleMotor.setPower(anglePower);
+
+        thisTelemetry.addData("Arm Angle Tolerance",angleMotor.getTargetPositionTolerance());
     }
 
     public boolean reachedTarget() {
@@ -87,13 +98,20 @@ public class ArmAngleSubsystem extends SubsystemBase {
 
     public void holdStartPosition(int position) {
         angleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        angleMotor.setTargetPositionTolerance(Angle.ANGLE_HOLD_TOLERANCE);
         angleMotor.setTargetPosition(position);
         angleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         angleMotor.setPower(Angle.ANGLE_HOLD_POWER);
     }
 
     public void setActiveRunMode() {
+        setPosition(1); //Travel position
+        //angleMotor.setPower(Angle.ANGLE_FF_RETRACTED+0.04);
         angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        this.angleTargetPosition=Angle.ANGLE_POSITIONS[RobotHardware.getInstance().ARM_POSITION];
+        //angleMotor.setPower(Angle.ANGLE_FF_RETRACTED+0.04);
+
+        //Set to travel mode
+        this.setPosition(1);
+        //this.periodic();
     }
 }

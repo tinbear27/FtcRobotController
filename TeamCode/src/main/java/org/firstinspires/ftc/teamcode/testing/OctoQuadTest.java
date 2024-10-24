@@ -2,9 +2,11 @@ package org.firstinspires.ftc.teamcode.testing;
 
 
 import com.qualcomm.hardware.digitalchickenlabs.OctoQuad;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+@Disabled
 @TeleOp(name = "OctoQuad Test", group="OctoQuad")
 public class OctoQuadTest extends LinearOpMode {
     // Identify which encoder OctoQuad inputs are connected to each odometry pod.

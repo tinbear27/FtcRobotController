@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.opmodes;
 
 import com.arcrobotics.ftclib.command.CommandOpMode;
 import com.arcrobotics.ftclib.command.CommandScheduler;
@@ -10,23 +10,26 @@ import com.arcrobotics.ftclib.gamepad.GamepadEx;
 import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.commandgroups.ArmPositionCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ClimbHighLiftCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ClimbHighReadyCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ClimbLowLiftCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ClimbLowReadyCommandGroup;
 import org.firstinspires.ftc.teamcode.commands.ArmAngleCommand;
 import org.firstinspires.ftc.teamcode.commands.ClawCommand;
+import org.firstinspires.ftc.teamcode.commands.ClimbersCommand;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-import org.firstinspires.ftc.teamcode.hardware.Drivetrain;
-
-@TeleOp(name = "Manual Drive (NEW)")
-public class ManualDriveNew extends CommandOpMode {
+@TeleOp(name = "Manual Drive")
+public class ManualDrive extends CommandOpMode {
     private final RobotHardware robot = RobotHardware.getInstance();
     private GamepadEx gamepadDriver;
     private GamepadEx gamepadOperator;
-    private Drivetrain drive;
+
 
     private double loopTime = 0.0, headingTarget=0.0, turnPower=0.0;
     private boolean armAngleModeFixed=false;
@@ -34,17 +37,12 @@ public class ManualDriveNew extends CommandOpMode {
     @Override
     public void initialize() {
         CommandScheduler.getInstance().reset();
-
-        robot.init(hardwareMap);
+        robot.init(hardwareMap,telemetry);
 
         gamepadDriver = new GamepadEx(gamepad1);
         gamepadOperator = new GamepadEx(gamepad2);
 
-        this.drive = new Drivetrain(hardwareMap);
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        //Set current arm position to start
-        robot.ARM_POSITION=0;
+        /* ===== MAP BUTTONS TO COMMANDS ===== */
 
         //Travel Position
         gamepadDriver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
@@ -55,15 +53,6 @@ public class ManualDriveNew extends CommandOpMode {
         gamepadDriver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,0.0,robot.armWinch,0.0,robot.wrist,0.0,robot.claw,0.500,2),
-                    new WaitCommand(0),
-                    () -> robot.ARM_POSITION==1
-                )
-        );
-
-        //Horizontal Grab - Ready (only from travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.B).whenPressed(
-                new ConditionalCommand(
-                    new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,4),
                     new WaitCommand(0),
                     () -> robot.ARM_POSITION==1
                 )
@@ -123,6 +112,9 @@ public class ManualDriveNew extends CommandOpMode {
                 )
         );
 
+        //Set current arm position to start
+        robot.ARM_POSITION=0;
+
         while (opModeInInit()) {
             telemetry.addLine("Robot Initialized");
             telemetry.update();
@@ -131,19 +123,24 @@ public class ManualDriveNew extends CommandOpMode {
 
     @Override
     public void run() {
-        //Make sure mode for arm angle motor is set
+        //First loop -- Make sure mode for arm angle motor is set and all arm subsystems set to travel position
         if(!armAngleModeFixed) {
             robot.armAngle.setActiveRunMode();
             armAngleModeFixed=true;
+
+            CommandScheduler.getInstance().schedule(
+                new ArmPositionCommandGroup(robot.armAngle,0.0,robot.armWinch,0.0,robot.wrist,0.0,null,0.0,1)
+            );
         }
 
+        //Schedule command and run robot periodic tasks
         CommandScheduler.getInstance().run();
         robot.periodic();
 
         /* ===== DRIVETRAIN ===== */
 
         // Read pose
-        Pose2d poseEstimate = drive.getPoseEstimate();
+        Pose2d poseEstimate = robot.drive.getPoseEstimate();
         double headingCurrent = poseEstimate.getHeading();
 
         //Check for low-speed mode
@@ -175,57 +172,71 @@ public class ManualDriveNew extends CommandOpMode {
             turnPower=(headingError/Math.PI)*3;
         }
 
-        turnPower*=Constants.Drive.TURN_POWER_MULTIPLIER;
+        turnPower*= Constants.Drive.TURN_POWER_MULTIPLIER;
 
-        drive.setWeightedDrivePower(
-            new Pose2d(input.getX(), input.getY(), turnPower)
-        );
+        //Do not use drivetrain if actively climbing
+        if(RobotHardware.climbState== Constants.Climbers.CLIMB_STATE.IDLE) {
+            robot.drive.setWeightedDrivePower(
+                    new Pose2d(input.getX(), input.getY(), turnPower)
+            );
+        } else {
+            robot.drive.setWeightedDrivePower(
+                    new Pose2d(0.0, 0.0, 0.0)
+            );
+        }
 
-        drive.update();
+        robot.drive.update();
 
         /* ===== CLIMB OPERATIONS ===== */
 
-        //Raise hooks
-        if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_UP)) {
-            if(robot.climberLeft.getCurrentPosition()<Constants.Climbers.CLIMBER_MAX) {
-                robot.climberLeft.set(1.0);
-            } else {
-                robot.climberLeft.set(0.0);
-            }
-
-            if(robot.climberRight.getCurrentPosition()<Constants.Climbers.CLIMBER_MAX) {
-                robot.climberRight.set(1.0);
-            } else {
-                robot.climberRight.set(0.0);
-            }
-
-        //Lower hooks
-        } else if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
-            if (robot.climberLeft.getCurrentPosition() > Constants.Climbers.CLIMBER_MIN) {
-                robot.climberLeft.set(-1.0);
-            } else {
-                robot.climberLeft.set(0.0);
-            }
-
-            if (robot.climberRight.getCurrentPosition() > Constants.Climbers.CLIMBER_MIN) {
-                robot.climberRight.set(-1.0);
-            } else {
-                robot.climberRight.set(0.0);
-            }
-
-        //Nothing - set power to zero
-        } else {
-            robot.climberLeft.set(0.0);
-            robot.climberRight.set(0.0);
+        //Climb Sequences
+        if(gamepadOperator.getButton(GamepadKeys.Button.BACK) && (RobotHardware.climbState!= Constants.Climbers.CLIMB_STATE.IDLE || robot.ARM_POSITION==19)) {
+            switch (RobotHardware.climbState) {
+                case IDLE:
+                    CommandScheduler.getInstance().schedule(
+                            new ClimbLowReadyCommandGroup(robot.lift,robot.climbers)
+                    );
+                    break;
+                case LOWRUNG_READY:
+                    CommandScheduler.getInstance().schedule(
+                            new ClimbLowLiftCommandGroup(robot.lift,robot.climbers)
+                    );
+                    break;
+                case LOWRUNG_LIFT:
+                    CommandScheduler.getInstance().schedule(
+                            new ClimbHighReadyCommandGroup(robot.climbers,robot.armAngle,robot.armWinch,robot.wrist)
+                    );
+                    break;
+                case HIGHRUNG_READY:
+                    CommandScheduler.getInstance().schedule(
+                            new ClimbHighLiftCommandGroup(robot.climbers,robot.armAngle,robot.armWinch,robot.wrist)
+                    );
+                    break;
+                case SUMMIT:
+                    break;
+                default:
+                    break;
+            };
         }
 
-        //Lift
-        if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_RIGHT)) {
-            robot.lift.setPower(0.5);
-        } else if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_LEFT)) {
-            robot.lift.setPower(-0.5);
-        } else {
-            robot.lift.setPower(0.0);
+        //High rung - Retry
+        if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+            //Retry - Lower climbers below high bar
+            if(RobotHardware.climbState== Constants.Climbers.CLIMB_STATE.HIGHRUNG_READY) {
+                CommandScheduler.getInstance().schedule(
+                        new SequentialCommandGroup(
+                            new ClimbersCommand(robot.climbers, Constants.Climbers.CLIMBER_HIGH_RETRY_POSITION),
+                            new InstantCommand(() -> RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.HIGHRUNG_RETRY))
+                        )
+                );
+            } else if(RobotHardware.climbState== Constants.Climbers.CLIMB_STATE.HIGHRUNG_RETRY) {
+                CommandScheduler.getInstance().schedule(
+                        new SequentialCommandGroup(
+                                new ClimbersCommand(robot.climbers, Constants.Climbers.CLIMBER_HIGH_READY_POSITION),
+                                new InstantCommand(() -> RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.HIGHRUNG_READY))
+                        )
+                );
+            }
         }
 
         /* ===== ARM/HAND/CLAW OPERATIONS ===== */
@@ -243,7 +254,7 @@ public class ManualDriveNew extends CommandOpMode {
                                 new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[3]),
 
                                 //Return to ready position -- DO NOT OPEN CLAW
-                                new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[2]),
+                                new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[2]+Constants.Arm.Angle.ANGLE_EXTRA_TICKS_POST_GRAB),
                                 new InstantCommand(() -> robot.setArmPosition(2))
                         )
                 );
@@ -259,7 +270,7 @@ public class ManualDriveNew extends CommandOpMode {
                                 new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[21]),
 
                                 //Return to ready position -- DO NOT OPEN CLAW
-                                new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[20]),
+                                new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[20]+Constants.Arm.Angle.ANGLE_EXTRA_TICKS_POST_GRAB),
                                 new InstantCommand(() -> robot.setArmPosition(20))
                         )
                 );
@@ -272,7 +283,7 @@ public class ManualDriveNew extends CommandOpMode {
             if (robot.ARM_POSITION == 2) {
                 CommandScheduler.getInstance().schedule(
                         new SequentialCommandGroup(
-                            new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[2]),
+                            new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_OPEN),
                             new InstantCommand(() -> robot.setArmPosition(2))
                         )
                 );
@@ -306,33 +317,51 @@ public class ManualDriveNew extends CommandOpMode {
                         )
                 );
 
-                //High Chamber - Attempt Hang
+                //High Chamber - Attempt Specimen Hang
             } else if(robot.ARM_POSITION==13) {
                 CommandScheduler.getInstance().schedule(
                         new SequentialCommandGroup(
-                                //Drop Sample
-                                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,14),
+                                //Hang Specimen
+                                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,14).withTimeout(1200),
                                 new WaitCommand(400),
-                                new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[14]),
+                                new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_OPEN),
 
                                 //Go back to travel position, with winch and wrist moving first
-                                new ArmPositionCommandGroup(robot.armAngle,0.3,robot.armWinch,0.0,robot.wrist,0.0,null,0.0,1)
+                                new ArmPositionCommandGroup(robot.armAngle,0.6,robot.armWinch,0.0,robot.wrist,0.0,null,0.0,1)
                         )
                 );
 
+                //Low Chamber - Attempt Specimen Hang
+            } else if(robot.ARM_POSITION==16) {
+                CommandScheduler.getInstance().schedule(
+                        new SequentialCommandGroup(
+                                //Hang Specimen
+                                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,17).withTimeout(1200),
+                                new WaitCommand(400),
+                                new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_OPEN),
+
+                                //Go back to travel position, with wrist delayed
+                                new ArmPositionCommandGroup(robot.armAngle,0.0,robot.armWinch,0.0,robot.wrist,0.4,null,0.0,1)
+                        )
+                );
             }
         }
 
         double loop = System.nanoTime();
         telemetry.addData("Loop Speed (hz): ", 1000000000 / (loop - loopTime));
+
         telemetry.addData("Global Arm Position: ", robot.ARM_POSITION);
         telemetry.addData("Arm Angle Position: ", robot.armAngle.getPosition());
         telemetry.addData("Arm Angle Target: ", robot.armAngle.getTarget());
         telemetry.addData("Arm Winch Position: ", robot.armWinch.getPosition());
         telemetry.addData("Arm Winch Target: ", robot.armWinch.getTarget());
-        telemetry.addData("Climber (Left) Pos: ", robot.climberLeft.getCurrentPosition());
-        telemetry.addData("Climber (Right) Pos: ", robot.climberRight.getCurrentPosition());
-        telemetry.addData("Lift Angle: ", robot.getLiftEncoderAngle());
+
+        telemetry.addData("Climber State: ", RobotHardware.climbState);
+        telemetry.addData("Climber Target Pos: ", robot.climbers.getTarget());
+        telemetry.addData("Climber (AVG) Pos: ", robot.climbers.getAveragePosition());
+        telemetry.addData("Climber (Left) Pos: ", robot.climbers.getLeftPosition());
+        telemetry.addData("Climber (Right) Pos: ", robot.climbers.getRightPosition());
+        telemetry.addData("Lift Pos: ", robot.lift.getCurrentPosition());
 
         loopTime = loop;
         telemetry.update();

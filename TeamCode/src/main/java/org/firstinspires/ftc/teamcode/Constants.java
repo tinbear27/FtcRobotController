@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.arcrobotics.ftclib.gamepad.GamepadKeys;
 import com.arcrobotics.ftclib.hardware.motors.Motor;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
@@ -131,8 +133,8 @@ public final class Constants {
                 "[1]  Travel",
                 "[2]  Vertical Grab - Ready position",
                 "[3]  Vertical Grab - Attempt",
-                "[4]  Horizontal Grab - Ready position",
-                "[5]  Horizontal Grab - Attempt",
+                "[4]  (unused)",
+                "[5]  (unused)",
                 "[6]  Wall Specimen Grab - Ready position",
                 "[7]  Wall Specimen Grab - Attempt (start)",
                 "[8]  Wall Specimen Grab - Attempt (end)",
@@ -142,17 +144,17 @@ public final class Constants {
                 "[12] Low Basket - Drop",
                 "[13] Hang Specimen (High Rung) - Ready position",
                 "[14] Hang Specimen (High Rung) - Attempt",
-                "[15] Hang Specimen (High Rung) - Release",
+                "[15] (unused)",
                 "[16] Hang Specimen (Low Rung) - Ready position",
                 "[17] Hang Specimen (Low Rung) - Attempt",
-                "[18] Hang Specimen (Low Rung) - Release",
+                "[18] Climb - Counterweight forward",
                 "[19] Climb - Ready position",
                 "[20] Floor Specimen Grab - Ready Position",
                 "[21] Floor Specimen Grab - Attempt Grab",
                 "[22] Auton - Sample Grab - Ready Position",
                 "[23] Auton - Sample Grab - Attempt",
                 "[24] Auton - Park with arm touching bottom rung",
-                "[25] (placeholder - unused)",
+                "[25] [25] Climb - Summit position",
         };
 
         //Angle Constants
@@ -160,7 +162,8 @@ public final class Constants {
             public static final String ANGLE_ID="ArmAngle";
             public static final DcMotorSimple.Direction ANGLE_DIRECTION=DcMotorSimple.Direction.REVERSE;
             public static final double ANGLE_POWER_MAX=1.0;
-            public static final double ANGLE_HOLD_POWER=0.3;
+            public static final double ANGLE_HOLD_POWER=0.35;
+            public static final int ANGLE_HOLD_TOLERANCE=50;
 
             //Angle limits
             public static final int ANGLE_MIN=0; //Encoder position when arm is fully lowered
@@ -169,47 +172,48 @@ public final class Constants {
             public static final int ANGLE_VERTICAL=2200; //Encoder position when arm is vertical
 
             //Feedforward constants
-            public static final double ANGLE_FF_RETRACTED=0.045; //Feedforward value when arm is horizontal and arm is fully retracted
-            public static final double ANGLE_FF_EXTENDED=0.08; //Feedforward value when arm is horizontal and arm is fully extended
+            public static final double ANGLE_FF_RETRACTED=0.04; //Feedforward value when arm is horizontal and arm is fully retracted
+            public static final double ANGLE_FF_EXTENDED=0.12; //Feedforward value when arm is horizontal and arm is fully extended
             public static final double TICKS_PER_DEGREE= 8192/360.0;
+            public static final int ANGLE_EXTRA_TICKS_POST_GRAB=100;
 
             //PID controller constants
             public static final double p=0.0027, i=0.0, d=0.0001;
 
             //Motion profile constants
             public static final double ANGLE_PROFILE_ACCEL=10000; //Ticks/sec/sec
-            public static final double ANGLE_PROFILE_DECEL=8000; //Ticks/sec/sec
+            public static final double ANGLE_PROFILE_DECEL=5000; //Ticks/sec/sec
             public static final double ANGLE_PROFILE_VELO=10000; //Ticks/sec
             public static final int ANGLE_TOLERANCE=100;
 
             //Positions
             public static final int[] ANGLE_POSITIONS = new int[] {
                     1100,  // [0]  At rest (start of match)
-                    660,  // [1]  Travel
-                    350,  // [2]  Vertical Grab - Ready position
-                    205,  // [3]  Vertical Grab - Attempt
-                    0,  // [4]  Horizontal Grab - Ready position
-                    0,  // [5]  Horizontal Grab - Attempt
+                    950,  // [1]  Travel
+                    370,  // [2]  Vertical Grab - Ready position
+                    220,  // [3]  Vertical Grab - Attempt
+                    0,  // [4]  (unused)
+                    0,  // [5]  (unused)
                     454,  // [6]  Wall Specimen Grab - Ready position
                     454,  // [7]  Wall Specimen Grab - Attempt (start)
                     850,  // [8]  Wall Specimen Grab - Attempt (end)
-                    2420,  // [9]  High Basket - Ready position
-                    2420,  // [10] High Basket - Drop
+                    2360,  // [9]  High Basket - Ready position
+                    2360,  // [10] High Basket - Drop
                     2460,  // [11] Low Basket - Ready position
                     2460,  // [12] Low Basket - Drop
-                    1700,  // [13] Hang Specimen (High Rung) - Ready position
+                    1750,  // [13] Hang Specimen (High Rung) - Ready position
                     1250,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
-                    684,  // [16] Hang Specimen (Low Rung) - Ready position
-                    500,  // [17] Hang Specimen (Low Rung) - Attempt
-                    500,  // [18] Hang Specimen (Low Rung) - Attempt
+                    920,  // [16] Hang Specimen (Low Rung) - Ready position
+                    350,  // [17] Hang Specimen (Low Rung) - Attempt
+                    1800,  // [18] Climb - Counterweight forward
                     2370,  // [19] Climb - Ready position
-                    360,  // [20] Floor Specimen Grab - Ready Position
-                    250,  // [21] Floor Specimen Grab - Attempt
+                    400,  // [20] Floor Specimen Grab - Ready Position
+                    260,  // [21] Floor Specimen Grab - Attempt
                     400,  // [22] Auton - Sample Grab - Ready Position
                     180,  // [23] Auton - Sample Grab - Attempt
                     1100,  // [24] Auton - Park with arm touching bottom rung
-                    0,  // [25] (placeholder - unused)
+                    920,  // [25] Climb - Summit position
             };
         }
 
@@ -218,7 +222,7 @@ public final class Constants {
             public static final String WINCH_ID="ArmWinch";
             public static final DcMotorSimple.Direction WINCH_DIRECTION=DcMotorSimple.Direction.FORWARD;
 
-            public static final double WINCH_POWER=0.7;
+            public static final double WINCH_POWER=0.5;
             public static final int WINCH_POSITION_MIN=0;
             public static final int WINCH_POSITION_MAX=550;
             public static final int WINCH_POSITION_TOLERANCE=30;
@@ -233,8 +237,8 @@ public final class Constants {
                     0,  // [1]  Travel
                     500,  // [2]  Vertical Grab - Ready position
                     500,  // [3]  Vertical Grab - Attempt
-                    173,  // [4]  Horizontal Grab - Ready position
-                    173,  // [5]  Horizontal Grab - Attempt
+                    0,  // [4]  (unused)
+                    0,  // [5]  (unused)
                     45,  // [6]  Wall Specimen Grab - Ready position
                     45,  // [7]  Wall Specimen Grab - Attempt (start)
                     48,  // [8]  Wall Specimen Grab - Attempt (end)
@@ -242,19 +246,19 @@ public final class Constants {
                     550,  // [10] High Basket - Drop
                     90,  // [11] Low Basket - Ready position
                     90,  // [12] Low Basket - Drop
-                    45,  // [13] Hang Specimen (High Rung) - Ready position
-                    45,  // [14] Hang Specimen (High Rung) - Attempt
+                    0,  // [13] Hang Specimen (High Rung) - Ready position
+                    0,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
-                    40,  // [16] Hang Specimen (Low Rung) - Ready position
-                    45,  // [17] Hang Specimen (Low Rung) - Attempt
-                    0,  // [18] (unused)
+                    0,  // [16] Hang Specimen (Low Rung) - Ready position
+                    0,  // [17] Hang Specimen (Low Rung) - Attempt
+                    400,  // [18] Climb - Counterweight forward
                     0,  // [19] Climb - Ready position
                     200,  // [20] Floor Specimen Grab - Ready Position
                     200,  // [21] Floor Specimen Grab - Attempt
                     250,  // [22] Auton - Sample Grab - Ready Position
                     250,  // [23] Auton - Sample Grab - Attempt
                     300,  // [24] Auton - Park with arm touching bottom rung
-                    0,  // [25] (placeholder - unused)
+                    45,  // [25] Climb - Summit position
             };
         }
 
@@ -263,36 +267,39 @@ public final class Constants {
             public static final String WRIST_ID="WristServo";
 
             //Time to finish
-            public static final double WRIST_SEC_PER_ROTATION=1.25; //Seconds it takes for servo to go from position 0 to 1
+            public static final double WRIST_SEC_PER_ROTATION=0.7; //Seconds it takes for servo to go from position 0 to 1
+
+            //Position at horizontal
+            public static final double WRIST_HORIZ_POS=0.50;
 
             //Positions
             public static final double[] WRIST_POSITIONS = new double[] {
-                    0.00,  // [0]  At rest (start of match)
-                    0.05,  // [1]  Travel
-                    0.81,  // [2]  Vertical Grab - Ready position
-                    0.81,  // [3]  Vertical Grab - Attempt
-                    0.48,  // [4]  Horizontal Grab - Ready position
-                    0.48,  // [5]  Horizontal Grab - Attempt
-                    0.53,  // [6]  Wall Specimen Grab - Ready position
-                    0.53,  // [7]  Wall Specimen Grab - Attempt (start)
-                    0.55,  // [8]  Wall Specimen Grab - Attempt (end)
-                    0.38,  // [9]  High Basket - Ready position
-                    0.38,  // [10] High Basket - Drop
-                    0.38,  // [11] Low Basket - Ready position
-                    0.38,  // [12] Low Basket - Drop
-                    0.53,  // [13] Hang Specimen (High Rung) - Ready position
-                    0.53,  // [14] Hang Specimen (High Rung) - Attempt
+                    0.14,  // [0]  At rest (start of match)
+                    0.85,  // [1]  Travel
+                    0.24,  // [2]  Vertical Grab - Ready position
+                    0.24,  // [3]  Vertical Grab - Attempt
+                    0.0,  // [4]  (unused)
+                    0.0,  // [5]  (unused)
+                    0.0,  // [6]  (unused)
+                    0.0,  // [7]  (unused)
+                    0.0,  // [8]  (unused)
+                    0.62,  // [9]  High Basket - Ready position
+                    0.62,  // [10] High Basket - Drop
+                    0.65,  // [11] Low Basket - Ready position
+                    0.65,  // [12] Low Basket - Drop
+                    0.47,  // [13] Hang Specimen (High Rung) - Ready position
+                    0.47,  // [14] Hang Specimen (High Rung) - Attempt
                     0.0,  // [15] (unused)
-                    0.56,  // [16] Hang Specimen (Low Rung) - Ready position
-                    0.56,  // [17] Hang Specimen (Low Rung) - Attempt
-                    0.56,  // [18] (unused)
-                    0.46,  // [19] Climb - Ready position
-                    0.7,  // [20] Floor Specimen Grab - Ready Position
-                    0.7,  // [21] Floor Specimen Grab - Attempt
-                    0.81,  // [22] Auton - Sample Grab - Ready Position
-                    0.81,  // [23] Auton - Sample Grab - Attempt
-                    0.05,  // [24] Auton - Park with arm touching bottom rung
-                    0.0,  // [25] (placeholder - unused)
+                    0.44,  // [16] Hang Specimen (Low Rung) - Ready position
+                    0.44,  // [17] Hang Specimen (Low Rung) - Attempt
+                    0.30,  // [18] Climb - Counterweight forward
+                    0.85,  // [19] Climb - Ready position
+                    0.30,  // [20] Floor Specimen Grab - Ready Position
+                    0.30,  // [21] Floor Specimen Grab - Attempt
+                    0.24,  // [22] Auton - Sample Grab - Ready Position
+                    0.24,  // [23] Auton - Sample Grab - Attempt
+                    0.70,  // [24] Auton - Park with arm touching bottom rung
+                    0.27,  // [25] Climb - Summit position
             };
         }
 
@@ -301,8 +308,8 @@ public final class Constants {
             public static final String CLAW_ID="ClawServo";
 
             //Preset positions
-            public static final double CLAW_OPEN=0.80;
-            public static final double CLAW_CLOSED=0.24;
+            public static final double CLAW_OPEN=0.22;
+            public static final double CLAW_CLOSED=0.68;
 
             //Time to finish
             public static final double CLAW_SEC_PER_ROTATION=0.5; //Seconds it takes for servo to go from position 0 to 1
@@ -313,8 +320,8 @@ public final class Constants {
                     CLAW_CLOSED,  // [1]  Travel
                     CLAW_OPEN,  // [2]  Vertical Grab - Ready position
                     CLAW_CLOSED,  // [3]  Vertical Grab - Attempt
-                    CLAW_OPEN,  // [4]  Horizontal Grab - Ready position
-                    CLAW_CLOSED,  // [5]  Horizontal Grab - Attempt
+                    0.0,  // [4]  (unused)
+                    0.0,  // [5]  (unused)
                     CLAW_OPEN,  // [6]  Wall Specimen Grab - Ready position
                     CLAW_CLOSED,  // [7]  Wall Specimen Grab - Attempt (start)
                     CLAW_CLOSED,  // [8]  Wall Specimen Grab - Attempt (end)
@@ -327,14 +334,14 @@ public final class Constants {
                     0.0,  // [15] (unused)
                     CLAW_CLOSED,  // [16] Hang Specimen (Low Rung) - Ready position
                     CLAW_CLOSED,  // [17] Hang Specimen (Low Rung) - Attempt
-                    0.0,  // [18] (unused)
+                    CLAW_CLOSED,  // [18] Climb - Counterweight forward
                     CLAW_CLOSED,  // [19] Climb - Ready position
                     CLAW_OPEN,  // [20] Floor Specimen Grab - Ready Position
                     CLAW_CLOSED,  // [21] Floor Specimen Grab - Attempt
                     CLAW_OPEN,  // [22] Auton - Sample Grab - Ready Position
                     CLAW_CLOSED,  // [23] Auton - Sample Grab - Attempt
                     CLAW_CLOSED,  // [24] Auton - Park with arm touching bottom rung
-                    0.0,  // [25] (placeholder - unused)
+                    CLAW_CLOSED,  // [25] Climb - Summit position
             };
 
         }
@@ -342,18 +349,38 @@ public final class Constants {
 
     //Climber Constants
     public static final class Climbers {
+        public static enum CLIMB_STATE {
+            IDLE,
+            LOWRUNG_READY,
+            LOWRUNG_LIFT,
+            HIGHRUNG_READY,
+            SUMMIT,
+            HIGHRUNG_RETRY
+        };
+
         public static final String CLIMBER_LEFT_ID="ClimberLeft";
         public static final String CLIMBER_RIGHT_ID="ClimberRight";
 
-        //Zero behavior
-        public static final Motor.ZeroPowerBehavior CLIMBER_MOTOR_ZERO=Motor.ZeroPowerBehavior.BRAKE;
+        //Motor directions
+        public static final DcMotorSimple.Direction CLIMBER_LEFT_DIRECTION=DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction CLIMBER_RIGHT_DIRECTION=DcMotorSimple.Direction.REVERSE;
 
-        public static final boolean CLIMBER_LEFT_INVERTED = false;
-        public static final boolean CLIMBER_RIGHT_INVERTED = true;
+        //Power
+        public static double CLIMBER_POWER=1.0;
 
         //Travel limits
         public static final int CLIMBER_MIN=0;
-        public static final int CLIMBER_MAX=2500;
+        public static final int CLIMBER_MAX=5800;
+
+        //Positions
+        public static final int CLIMBER_START_POSITION=0;
+        public static final int CLIMBER_LOW_READY_POSITION=2650; //Move hooks above lower bar
+        public static final int CLIMBER_LOW_ENGAGE_POSITION=1800; //Grab bar, but do not lift yet
+        public static final int CLIMBER_HIGH_READY_POSITION=5800; //Move hooks above upper bar (while suspended)
+        public static final int CLIMBER_HIGH_RETRY_POSITION=3800; //Retry high hook position
+
+        //Tolerance of error (based on average position)
+        public static final int CLIMBER_POSITION_TOLERANCE=20;
     }
 
     //Lift Constants
@@ -362,11 +389,17 @@ public final class Constants {
         public static final String LIFT_ENCODER_ID="LiftEncoder";
 
         //Direction
-        public static final DcMotorSimple.Direction LIFT_DIRECTION=DcMotorSimple.Direction.FORWARD;
+        public static final DcMotorSimple.Direction LIFT_DIRECTION=DcMotorSimple.Direction.REVERSE;
+
+        //Power
+        public static double LIFT_POWER=0.7;
 
         //Travel limits
         public static final int LIFT_MIN=0;
-        public static final int LIFT_MAX=1000;
+        public static final int LIFT_MAX=2850;
+
+        //Tolerance of error (degrees of turn)
+        public static final int LIFT_POSITION_TOLERANCE=180;
     }
 
     //Autonomous Constants
