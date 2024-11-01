@@ -12,7 +12,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Constants;
 import org.firstinspires.ftc.teamcode.commandgroups.ArmPositionCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ArmTravelAfterGrabCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.ClimbHighLiftCommandGroup;
+import org.firstinspires.ftc.teamcode.commandgroups.ClimbHighPoisedCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.ClimbHighReadyCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.ClimbLowLiftCommandGroup;
 import org.firstinspires.ftc.teamcode.commandgroups.ClimbLowReadyCommandGroup;
@@ -20,6 +22,7 @@ import org.firstinspires.ftc.teamcode.commands.ArmAngleCommand;
 import org.firstinspires.ftc.teamcode.commands.ClawCommand;
 import org.firstinspires.ftc.teamcode.commands.ClimbersCommand;
 import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
+import org.firstinspires.ftc.teamcode.utility.PoseStorage;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.acmerobotics.roadrunner.geometry.Vector2d;
@@ -30,7 +33,6 @@ public class ManualDrive extends CommandOpMode {
     private GamepadEx gamepadDriver;
     private GamepadEx gamepadOperator;
 
-
     private double loopTime = 0.0, headingTarget=0.0, turnPower=0.0;
     private boolean armAngleModeFixed=false;
 
@@ -39,27 +41,38 @@ public class ManualDrive extends CommandOpMode {
         CommandScheduler.getInstance().reset();
         robot.init(hardwareMap,telemetry);
 
+        //If pose was saved in auton, translate heading by 90 deg to match driver orientation
+        if(PoseStorage.currentPose.getX()!=0.0) {
+            PoseStorage.currentPose=new Pose2d(0.0,0.0,PoseStorage.currentPose.getHeading()-Math.toRadians(90.0));
+        }
+        robot.drive.setPoseEstimate(PoseStorage.currentPose);
+
+        //Get controllers
         gamepadDriver = new GamepadEx(gamepad1);
         gamepadOperator = new GamepadEx(gamepad2);
 
         /* ===== MAP BUTTONS TO COMMANDS ===== */
 
         //Travel Position
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
-                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,1)
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.Y).whenPressed(
+                new ConditionalCommand(
+                    new ArmTravelAfterGrabCommandGroup(robot.armAngle,robot.armWinch,robot.wrist),
+                    new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,1),
+                    () -> robot.ARM_POSITION==2
+                )
         );
 
         //Vertical Grab - Ready (only from travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.A).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.A).whenPressed(
                 new ConditionalCommand(
-                    new ArmPositionCommandGroup(robot.armAngle,0.0,robot.armWinch,0.0,robot.wrist,0.0,robot.claw,0.500,2),
+                    new ArmPositionCommandGroup(robot.armAngle,0.0,robot.armWinch,0.3,robot.wrist,0.0,robot.claw,0.500,2),
                     new WaitCommand(0),
                     () -> robot.ARM_POSITION==1
                 )
         );
 
         //Specimen Floor Grab - Ready (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.X).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.X).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,20),
                     new WaitCommand(0),
@@ -68,7 +81,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //High Basket - Ready Position (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.DPAD_UP).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,9),
                     new WaitCommand(0),
@@ -77,7 +90,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //Low Basket - Ready Position (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.DPAD_DOWN).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,11),
                     new WaitCommand(0),
@@ -86,7 +99,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //Hang Specimen (High Chamber) - Ready Position (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.DPAD_RIGHT).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,13),
                     new WaitCommand(0),
@@ -95,7 +108,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //Hang Specimen (Low Chamber) - Ready Position (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.DPAD_LEFT).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,16),
                     new WaitCommand(0),
@@ -104,7 +117,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //Climb - Ready Position (only when in travel position)
-        gamepadDriver.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(
+        gamepadOperator.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,19),
                     new WaitCommand(0),
@@ -114,8 +127,15 @@ public class ManualDrive extends CommandOpMode {
 
         //Set current arm position to start
         robot.ARM_POSITION=0;
+        robot.holdStartPosition();
 
         while (opModeInInit()) {
+            robot.armAngle.periodic();
+            robot.armWinch.periodic();
+
+            telemetry.addData("Saved Pose (X)",PoseStorage.currentPose.getX());
+            telemetry.addData("Saved Pose (Y)",PoseStorage.currentPose.getY());
+            telemetry.addData("Saved Pose (Heading)",Math.toDegrees(PoseStorage.currentPose.getHeading()));
             telemetry.addLine("Robot Initialized");
             telemetry.update();
         }
@@ -125,7 +145,6 @@ public class ManualDrive extends CommandOpMode {
     public void run() {
         //First loop -- Make sure mode for arm angle motor is set and all arm subsystems set to travel position
         if(!armAngleModeFixed) {
-            robot.armAngle.setActiveRunMode();
             armAngleModeFixed=true;
 
             CommandScheduler.getInstance().schedule(
@@ -133,11 +152,21 @@ public class ManualDrive extends CommandOpMode {
             );
         }
 
+        //Re-zero arm
+        if(gamepad1.start) {
+            robot.armZero();
+        }
+
         //Schedule command and run robot periodic tasks
         CommandScheduler.getInstance().run();
-        robot.periodic();
 
         /* ===== DRIVETRAIN ===== */
+
+        //Reset heading
+        if(gamepadDriver.getButton(GamepadKeys.Button.BACK)) {
+            robot.drive.setPoseEstimate(new Pose2d(0.0,0.0,0.0));
+            headingTarget=0.0;
+        }
 
         // Read pose
         Pose2d poseEstimate = robot.drive.getPoseEstimate();
@@ -173,9 +202,12 @@ public class ManualDrive extends CommandOpMode {
         }
 
         turnPower*= Constants.Drive.TURN_POWER_MULTIPLIER;
+        if(robot.ARM_POSITION==2 || robot.ARM_POSITION==6 || robot.ARM_POSITION==20) {
+            turnPower*=Constants.Drive.TURN_POWER_EXTENDED;
+        }
 
         //Do not use drivetrain if actively climbing
-        if(RobotHardware.climbState== Constants.Climbers.CLIMB_STATE.IDLE) {
+        if(RobotHardware.climbState == Constants.Climbers.CLIMB_STATE.IDLE) {
             robot.drive.setWeightedDrivePower(
                     new Pose2d(input.getX(), input.getY(), turnPower)
             );
@@ -190,7 +222,7 @@ public class ManualDrive extends CommandOpMode {
         /* ===== CLIMB OPERATIONS ===== */
 
         //Climb Sequences
-        if(gamepadOperator.getButton(GamepadKeys.Button.BACK) && (RobotHardware.climbState!= Constants.Climbers.CLIMB_STATE.IDLE || robot.ARM_POSITION==19)) {
+        if(gamepadOperator.getButton(GamepadKeys.Button.START) && (RobotHardware.climbState != Constants.Climbers.CLIMB_STATE.IDLE || robot.ARM_POSITION==19)) {
             switch (RobotHardware.climbState) {
                 case IDLE:
                     CommandScheduler.getInstance().schedule(
@@ -207,6 +239,11 @@ public class ManualDrive extends CommandOpMode {
                             new ClimbHighReadyCommandGroup(robot.climbers,robot.armAngle,robot.armWinch,robot.wrist)
                     );
                     break;
+                case HIGHRUNG_POISED:
+                    CommandScheduler.getInstance().schedule(
+                            new ClimbHighPoisedCommandGroup(robot.climbers)
+                    );
+                    break;
                 case HIGHRUNG_READY:
                     CommandScheduler.getInstance().schedule(
                             new ClimbHighLiftCommandGroup(robot.climbers,robot.armAngle,robot.armWinch,robot.wrist)
@@ -220,7 +257,7 @@ public class ManualDrive extends CommandOpMode {
         }
 
         //High rung - Retry
-        if(gamepadOperator.getButton(GamepadKeys.Button.DPAD_DOWN)) {
+        if(gamepadOperator.getButton(GamepadKeys.Button.LEFT_BUMPER)) {
             //Retry - Lower climbers below high bar
             if(RobotHardware.climbState== Constants.Climbers.CLIMB_STATE.HIGHRUNG_READY) {
                 CommandScheduler.getInstance().schedule(
@@ -248,10 +285,7 @@ public class ManualDrive extends CommandOpMode {
                 CommandScheduler.getInstance().schedule(
                         new SequentialCommandGroup(
                                 //Lower arm to grab position
-                                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,3),
-
-                                //Close claw
-                                new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[3]),
+                                new ArmPositionCommandGroup(robot.armAngle,0.0,1000,robot.armWinch,0.0,0,robot.wrist,0.0,robot.claw,0.2,3),
 
                                 //Return to ready position -- DO NOT OPEN CLAW
                                 new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[2]+Constants.Arm.Angle.ANGLE_EXTRA_TICKS_POST_GRAB),
@@ -264,10 +298,12 @@ public class ManualDrive extends CommandOpMode {
                 CommandScheduler.getInstance().schedule(
                         new SequentialCommandGroup(
                                 //Lower arm to grab position
-                                new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,21),
+                                new ArmPositionCommandGroup(robot.armAngle,0.0,1000,robot.armWinch,0.0,0,robot.wrist,0.0,robot.claw,0.2,21),
+                                //new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,null,21),
 
                                 //Close claw
-                                new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[21]),
+                                //new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_POSITIONS[21]),
+                                //new WaitCommand(300),
 
                                 //Return to ready position -- DO NOT OPEN CLAW
                                 new ArmAngleCommand(robot.armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[20]+Constants.Arm.Angle.ANGLE_EXTRA_TICKS_POST_GRAB),
@@ -282,10 +318,13 @@ public class ManualDrive extends CommandOpMode {
             //Vertical Grab Attempt Failed, return to ready position
             if (robot.ARM_POSITION == 2) {
                 CommandScheduler.getInstance().schedule(
-                        new SequentialCommandGroup(
-                            new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_OPEN),
-                            new InstantCommand(() -> robot.setArmPosition(2))
-                        )
+                   new ClawCommand(robot.claw, Constants.Arm.Claw.CLAW_OPEN)
+                );
+
+                //Floor Grab Attempt Failed, return to ready position
+            } else if (robot.ARM_POSITION == 20) {
+                CommandScheduler.getInstance().schedule(
+                   new ClawCommand(robot.claw,Constants.Arm.Claw.CLAW_OPEN)
                 );
 
             //High Basket - Drop

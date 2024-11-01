@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.Constants;
 
-@Disabled
+//@Disabled
 @Autonomous(group = "Utility",name="Servo Reset (50 percent)")
 public class UtilityServoReset  extends LinearOpMode {
     Servo clawServo, wristServo;

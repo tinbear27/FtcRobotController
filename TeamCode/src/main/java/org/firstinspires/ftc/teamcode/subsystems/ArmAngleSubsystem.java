@@ -34,10 +34,16 @@ public class ArmAngleSubsystem extends SubsystemBase {
         angleMotor = hMap.get(DcMotorEx.class, Angle.ANGLE_ID);
         angleMotor.setDirection(Angle.ANGLE_DIRECTION);
         angleMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        this.controller = new PIDController(Angle.p, Angle.i, Angle.d);
+        //angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        this.controller = new PIDController(Angle.p, Angle.i, Angle.d);
         this.thisTelemetry=telemetry;
+    }
+
+    public void reset() {
+        angleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        angleMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setPositionByIndex(int indexNum) {
@@ -83,19 +89,25 @@ public class ArmAngleSubsystem extends SubsystemBase {
 
         //Calculate power using PID and Feedforward
         double pidPower=controller.calculate(currentAnglePosition, anglePidTarget);
-        this.anglePower = pidPower+angleFeedforward;
-        this.anglePower = MathUtility.clamp(anglePower, -(Angle.ANGLE_POWER_MAX), Angle.ANGLE_POWER_MAX);
+        this.anglePower = MathUtility.clamp(pidPower+angleFeedforward, -(Angle.ANGLE_POWER_MAX), Angle.ANGLE_POWER_MAX);
+        thisTelemetry.addData("Arm Angle PID Power:",pidPower);
+        thisTelemetry.addData("Arm Angle Applied Power:",anglePower);
+        thisTelemetry.addData("Arm Angle Tolerance",angleMotor.getTargetPositionTolerance());
 
         //Apply power
         angleMotor.setPower(anglePower);
+    }
 
-        thisTelemetry.addData("Arm Angle Tolerance",angleMotor.getTargetPositionTolerance());
+    //Sets motor power -- only used during init (zeroing)
+    public void setZeroPower(double zeroPower) {
+        angleMotor.setPower(zeroPower);
     }
 
     public boolean reachedTarget() {
         return (Math.abs(currentAnglePosition-angleTargetPosition)<Angle.ANGLE_TOLERANCE);
     }
 
+    /*
     public void holdStartPosition(int position) {
         angleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         angleMotor.setTargetPositionTolerance(Angle.ANGLE_HOLD_TOLERANCE);
@@ -103,6 +115,7 @@ public class ArmAngleSubsystem extends SubsystemBase {
         angleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         angleMotor.setPower(Angle.ANGLE_HOLD_POWER);
     }
+*/
 
     public void setActiveRunMode() {
         setPosition(1); //Travel position

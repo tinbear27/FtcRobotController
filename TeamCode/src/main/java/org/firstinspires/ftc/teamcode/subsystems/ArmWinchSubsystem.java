@@ -21,10 +21,15 @@ public class ArmWinchSubsystem extends SubsystemBase {
         this.winchMotor = hMap.get(DcMotorEx.class, Winch.WINCH_ID);
         winchMotor.setDirection(Winch.WINCH_DIRECTION);
         winchMotor.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        winchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        //winchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         winchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         this.thisTelemetry=telemetry;
+    }
+
+    public void reset() {
+        winchMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        winchMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
     }
 
     public void setPositionByIndex(int indexNum) {
@@ -59,6 +64,11 @@ public class ArmWinchSubsystem extends SubsystemBase {
             if(ffPower<0.01) { ffPower=0.0; }
             winchMotor.setPower(ffPower);
         }
+    }
+
+    //Sets motor power -- only used during init (zeroing)
+    public void setZeroPower(double zeroPower) {
+        winchMotor.setPower(zeroPower);
     }
 
     public boolean reachedTarget() {
