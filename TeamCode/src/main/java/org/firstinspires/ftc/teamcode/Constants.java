@@ -132,11 +132,11 @@ public final class Constants {
                 "[1]  Travel",
                 "[2]  Vertical Grab - Ready position",
                 "[3]  Vertical Grab - Attempt",
-                "[4]  (unused)",
-                "[5]  (unused)",
-                "[6]  Wall Specimen Grab - Ready position",
-                "[7]  Wall Specimen Grab - Attempt (start)",
-                "[8]  Wall Specimen Grab - Attempt (end)",
+                "[4]  [AUTON] Hang Specimen (High Rung) - Ready position",
+                "[5]  [AUTON] Hang Specimen (High Rung) - Attempt",
+                "[6]  [AUTON] Floor Specimen Grab - Ready Position",
+                "[7]  [AUTON] Floor Specimen Grab - Attempt Grab",
+                "[8]  (unused)",
                 "[9]  High Basket - Ready position",
                 "[10] High Basket - Drop",
                 "[11] Low Basket - Ready position",
@@ -150,9 +150,9 @@ public final class Constants {
                 "[19] Climb - Ready position",
                 "[20] Floor Specimen Grab - Ready Position",
                 "[21] Floor Specimen Grab - Attempt Grab",
-                "[22] Auton - Sample Grab - Ready Position",
-                "[23] Auton - Sample Grab - Attempt",
-                "[24] Auton - Park with arm touching bottom rung",
+                "[22] [AUTON]  Sample Grab - Ready Position",
+                "[23] [AUTON]  Sample Grab - Attempt",
+                "[24] [AUTON]  Park with arm touching bottom rung",
                 "[25] [25] Climb - Summit position",
         };
 
@@ -191,27 +191,27 @@ public final class Constants {
                     950,  // [1]  Travel
                     460,  // [2]  Vertical Grab - Ready position
                     220,  // [3]  Vertical Grab - Attempt
-                    0,  // [4]  (unused)
-                    0,  // [5]  (unused)
-                    454,  // [6]  Wall Specimen Grab - Ready position
-                    454,  // [7]  Wall Specimen Grab - Attempt (start)
-                    850,  // [8]  Wall Specimen Grab - Attempt (end)
+                    1750,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    1150,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    600,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
+                    260,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
+                    0,  // [8]  (unused)
                     2420,  // [9]  High Basket - Ready position
                     2420,  // [10] High Basket - Drop
                     2460,  // [11] Low Basket - Ready position
                     2460,  // [12] Low Basket - Drop
                     1750,  // [13] Hang Specimen (High Rung) - Ready position
-                    1250,  // [14] Hang Specimen (High Rung) - Attempt
+                    1150,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
                     920,  // [16] Hang Specimen (Low Rung) - Ready position
                     350,  // [17] Hang Specimen (Low Rung) - Attempt
-                    1800,  // [18] Climb - Counterweight forward
+                    1850,  // [18] Climb - Counterweight forward
                     2370,  // [19] Climb - Ready position
-                    500,  // [20] Floor Specimen Grab - Ready Position
+                    520,  // [20] Floor Specimen Grab - Ready Position
                     260,  // [21] Floor Specimen Grab - Attempt
-                    400,  // [22] Auton - Sample Grab - Ready Position
-                    180,  // [23] Auton - Sample Grab - Attempt
-                    1100,  // [24] Auton - Park with arm touching bottom rung
+                    450,  // [22] [AUTON] Sample Grab - Ready Position
+                    180,  // [23] [AUTON] Sample Grab - Attempt
+                    1100,  // [24] [AUTON] Park with arm touching bottom rung
                     920,  // [25] Climb - Summit position
             };
         }
@@ -236,11 +236,11 @@ public final class Constants {
                     0,  // [1]  Travel
                     500,  // [2]  Vertical Grab - Ready position
                     500,  // [3]  Vertical Grab - Attempt
-                    0,  // [4]  (unused)
-                    0,  // [5]  (unused)
-                    45,  // [6]  Wall Specimen Grab - Ready position
-                    45,  // [7]  Wall Specimen Grab - Attempt (start)
-                    48,  // [8]  Wall Specimen Grab - Attempt (end)
+                    0,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    0,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    200,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
+                    200,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
+                    0,  // [8]  (unused)
                     550,  // [9]  High Basket - Ready position
                     550,  // [10] High Basket - Drop
                     90,  // [11] Low Basket - Ready position
@@ -254,9 +254,9 @@ public final class Constants {
                     0,  // [19] Climb - Ready position
                     200,  // [20] Floor Specimen Grab - Ready Position
                     200,  // [21] Floor Specimen Grab - Attempt
-                    250,  // [22] Auton - Sample Grab - Ready Position
-                    250,  // [23] Auton - Sample Grab - Attempt
-                    300,  // [24] Auton - Park with arm touching bottom rung
+                    250,  // [22] [AUTON] Sample Grab - Ready Position
+                    250,  // [23] [AUTON] Sample Grab - Attempt
+                    300,  // [24] [AUTON] Park with arm touching bottom rung
                     45,  // [25] Climb - Summit position
             };
         }
@@ -280,10 +280,10 @@ public final class Constants {
                     0.85+WRIST_CORRECTION,  // [1]  Travel
                     0.24+WRIST_CORRECTION,  // [2]  Vertical Grab - Ready position
                     0.24+WRIST_CORRECTION,  // [3]  Vertical Grab - Attempt
-                    0.0,  // [4]  (unused)
-                    0.0,  // [5]  (unused)
-                    0.0,  // [6]  (unused)
-                    0.0,  // [7]  (unused)
+                    0.47+WRIST_CORRECTION,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    0.47+WRIST_CORRECTION,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    0.30+WRIST_CORRECTION,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
+                    0.30+WRIST_CORRECTION,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
                     0.0,  // [8]  (unused)
                     0.62+WRIST_CORRECTION,  // [9]  High Basket - Ready position
                     0.62+WRIST_CORRECTION,  // [10] High Basket - Drop
@@ -298,9 +298,9 @@ public final class Constants {
                     0.85+WRIST_CORRECTION,  // [19] Climb - Ready position
                     0.30+WRIST_CORRECTION,  // [20] Floor Specimen Grab - Ready Position
                     0.30+WRIST_CORRECTION,  // [21] Floor Specimen Grab - Attempt
-                    0.24+WRIST_CORRECTION,  // [22] Auton - Sample Grab - Ready Position
-                    0.24+WRIST_CORRECTION,  // [23] Auton - Sample Grab - Attempt
-                    0.70+WRIST_CORRECTION,  // [24] Auton - Park with arm touching bottom rung
+                    0.24+WRIST_CORRECTION,  // [22] [AUTON] Sample Grab - Ready Position
+                    0.24+WRIST_CORRECTION,  // [23] [AUTON] Sample Grab - Attempt
+                    0.70+WRIST_CORRECTION,  // [24] [AUTON] Park with arm touching bottom rung
                     0.27+WRIST_CORRECTION,  // [25] Climb - Summit position
             };
         }
@@ -322,11 +322,11 @@ public final class Constants {
                     CLAW_CLOSED,  // [1]  Travel
                     CLAW_OPEN,  // [2]  Vertical Grab - Ready position
                     CLAW_CLOSED,  // [3]  Vertical Grab - Attempt
-                    0.0,  // [4]  (unused)
-                    0.0,  // [5]  (unused)
-                    CLAW_OPEN,  // [6]  Wall Specimen Grab - Ready position
-                    CLAW_CLOSED,  // [7]  Wall Specimen Grab - Attempt (start)
-                    CLAW_CLOSED,  // [8]  Wall Specimen Grab - Attempt (end)
+                    CLAW_CLOSED,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    CLAW_OPEN,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    CLAW_OPEN,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
+                    CLAW_CLOSED,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
+                    0.0,  // [8]  (unused)
                     CLAW_CLOSED,  // [9]  High Basket - Ready position
                     CLAW_OPEN,  // [10] High Basket - Drop
                     CLAW_CLOSED,  // [11] Low Basket - Ready position
@@ -340,9 +340,9 @@ public final class Constants {
                     CLAW_CLOSED,  // [19] Climb - Ready position
                     CLAW_OPEN,  // [20] Floor Specimen Grab - Ready Position
                     CLAW_CLOSED,  // [21] Floor Specimen Grab - Attempt
-                    CLAW_OPEN,  // [22] Auton - Sample Grab - Ready Position
-                    CLAW_CLOSED,  // [23] Auton - Sample Grab - Attempt
-                    CLAW_CLOSED,  // [24] Auton - Park with arm touching bottom rung
+                    CLAW_OPEN,  // [22] [AUTON] Sample Grab - Ready Position
+                    CLAW_CLOSED,  // [23] [AUTON] Sample Grab - Attempt
+                    CLAW_CLOSED,  // [24] [AUTON] Park with arm touching bottom rung
                     CLAW_CLOSED,  // [25] Climb - Summit position
             };
 

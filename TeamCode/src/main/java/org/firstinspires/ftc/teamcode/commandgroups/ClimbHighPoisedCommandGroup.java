@@ -15,7 +15,7 @@ public class ClimbHighPoisedCommandGroup extends SequentialCommandGroup {
     public ClimbHighPoisedCommandGroup(ClimbersSubsystem climbers) {
         addCommands(
             new ClimbersCommand(climbers, Constants.Climbers.CLIMBER_HIGH_RETRY_POSITION),
-            new InstantCommand(() -> RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.HIGHRUNG_READY))
+            new InstantCommand(() -> RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.HIGHRUNG_POISED))
         );
 
         addRequirements(climbers);

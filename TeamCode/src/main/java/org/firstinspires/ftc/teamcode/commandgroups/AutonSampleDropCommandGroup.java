@@ -10,23 +10,14 @@ import org.firstinspires.ftc.teamcode.subsystems.ArmWinchSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
-public class AutonSampleGrabCommandGroup extends SequentialCommandGroup {
+public class AutonSampleDropCommandGroup extends SequentialCommandGroup {
 
-    public AutonSampleGrabCommandGroup(ArmAngleSubsystem armAngle, ArmWinchSubsystem armWinch, WristSubsystem wrist, ClawSubsystem claw) {
-
-        //Sample grab position
-        int positionNumber = 23;
+    public AutonSampleDropCommandGroup(ArmAngleSubsystem armAngle, ArmWinchSubsystem armWinch, WristSubsystem wrist, ClawSubsystem claw) {
 
         addCommands(
-            new ArmPositionCommandGroup(armAngle,armWinch,wrist,null, positionNumber).withTimeout(400),
-            new WaitCommand(100),
-
-            //Close claw
-            new ClawCommand(claw, Constants.Arm.Claw.CLAW_CLOSED),
+            new ClawCommand(claw, Constants.Arm.Claw.CLAW_OPEN),
             new WaitCommand(200),
-
-            //Return to travel position -- DO NOT OPEN CLAW
-            new ArmPositionCommandGroup(armAngle,armWinch,wrist,null,1)
+            new ArmPositionCommandGroup(armAngle,0.0,armWinch,0.2,wrist,0.3,null,0.0,1)
         );
 
         addRequirements(armAngle,armWinch,wrist,claw);

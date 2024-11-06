@@ -20,8 +20,8 @@ public class ClimbHighReadyCommandGroup extends SequentialCommandGroup {
                 new ParallelCommandGroup(
                     new ClimbersCommand(climbers,Constants.Climbers.CLIMBER_HIGH_READY_POSITION),
                     new SequentialCommandGroup(
-                        new WaitCommand(2200),
-                        new ArmPositionCommandGroup(armAngle,0.3,armWinch,1.0,wrist,0.0,null,0.0,18).withTimeout(2500)
+                        new WaitCommand(400),
+                        new ArmPositionCommandGroup(armAngle,0.2,armWinch,0.6,wrist,0.0,null,0.0,18).withTimeout(1500)
                     )
                 ),
                 new InstantCommand(() -> RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.HIGHRUNG_READY))

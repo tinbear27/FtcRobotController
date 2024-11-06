@@ -17,7 +17,7 @@ import org.firstinspires.ftc.teamcode.hardware.RobotHardware;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.utility.PoseStorage;
 
-@Autonomous(group = "Autonomous",name="Specimens")
+@Autonomous(group = "Autonomous",name="Specimens", preselectTeleOp="Manual Drive")
 public class AutonSpecimens extends LinearOpMode {
 
     enum State {
@@ -43,16 +43,17 @@ public class AutonSpecimens extends LinearOpMode {
     Pose2d startPose = new Pose2d(8.5, -63, Math.toRadians(90));
 
     //Define all trajectory start/end poses
-    Pose2d floorGrabPose=new Pose2d(31, -60, Math.toRadians(0));
-    Pose2d parkPose=new Pose2d(67, -60, Math.toRadians(90));
-    Pose2d specimenScorePose1=new Pose2d(3, -32, Math.toRadians(90));
-    Pose2d specimenScorePose2=new Pose2d(0, -32, Math.toRadians(90));
-    Pose2d specimenScorePose3=new Pose2d(-3, -32, Math.toRadians(90));
+    Pose2d floorGrabPose=new Pose2d(30.5, -59.5, Math.toRadians(0));
+    Pose2d preParkPose=new Pose2d(34, -58, Math.toRadians(90));
+    Pose2d parkPose=new Pose2d(57, -60, Math.toRadians(90));
+    Pose2d specimenScorePose1=new Pose2d(-5.5, -31.5, Math.toRadians(90));
+    Pose2d specimenScorePose2=new Pose2d(-3.5, -31.5, Math.toRadians(90));
+    Pose2d specimenScorePose3=new Pose2d(-1.5, -31.5, Math.toRadians(90));
 
     //Define delays for arm actions
-    double delayScoreReady=0.3;
-    double delayScoreAttempt=1.8;
-    double delayGrabReady=0.6;
+    double delayScoreReady=0.2;
+    double delayScoreAttempt=2.5;
+    double delayGrabReady=0.8;
     double delayGrabAttempt=1.6;
 
     private double loopTime = 0.0;
@@ -71,7 +72,7 @@ public class AutonSpecimens extends LinearOpMode {
         //(1) Move to submersible with pre-loaded specimen, raising arm to high chamber ready level
         TrajectorySequence trajectory1=robot.drive.trajectorySequenceBuilder(startPose)
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,13));
+                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,4));
                 })
                 .lineToLinearHeading(specimenScorePose1)
                 .waitSeconds(delayScoreReady)
@@ -79,16 +80,13 @@ public class AutonSpecimens extends LinearOpMode {
 
        //(2) Attempt specimen hang
        TrajectorySequence trajectory2=robot.drive.trajectorySequenceBuilder(specimenScorePose1)
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
-                })
                 .waitSeconds(delayScoreAttempt)
                .build();
 
         //(3) Move to floor specimen, lowering arm to ready position
         TrajectorySequence trajectory3=robot.drive.trajectorySequenceBuilder(specimenScorePose1)
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,20));
+                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,1.0,robot.armWinch,1.0,robot.wrist,1.0,robot.claw,1.0,6));
                 })
                 .lineToLinearHeading(floorGrabPose)
                 .waitSeconds(delayGrabReady)
@@ -96,16 +94,13 @@ public class AutonSpecimens extends LinearOpMode {
 
         //(4) Attempt specimen grab
         TrajectorySequence trajectory4=robot.drive.trajectorySequenceBuilder(floorGrabPose)
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new AutonSpecimenFloorGrabCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
-                })
                 .waitSeconds(delayGrabAttempt)
                 .build();
 
         //(5) Move to submersible, raising arm to high chamber ready level
         TrajectorySequence trajectory5=robot.drive.trajectorySequenceBuilder(floorGrabPose)
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,13));
+                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,4));
                 })
                 .lineToLinearHeading(specimenScorePose2)
                 .waitSeconds(delayScoreReady)
@@ -113,32 +108,26 @@ public class AutonSpecimens extends LinearOpMode {
 
         //(6) Attempt specimen hang
         TrajectorySequence trajectory6=robot.drive.trajectorySequenceBuilder(specimenScorePose2)
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
-                })
                 .waitSeconds(delayScoreAttempt)
                 .build();
 
         //(7) Move to floor specimen location, lowering arm to ready position
         TrajectorySequence trajectory7=robot.drive.trajectorySequenceBuilder(specimenScorePose2)
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,20));
+                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,1.0,robot.armWinch,1.0,robot.wrist,1.0,robot.claw,1.0,6));
                 })
                 .lineToLinearHeading(floorGrabPose)
                 .build();
 
         //(8) Attempt specimen grab
         TrajectorySequence trajectory8=robot.drive.trajectorySequenceBuilder(floorGrabPose)
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new AutonSpecimenFloorGrabCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
-                })
                 .waitSeconds(delayGrabAttempt)
                 .build();
 
         //(9) Move to submersible, raising arm to high chamber ready level
         TrajectorySequence trajectory9=robot.drive.trajectorySequenceBuilder(floorGrabPose)
                 .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,13));
+                    CommandScheduler.getInstance().schedule(new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,4));
                 })
                 .lineToLinearHeading(specimenScorePose3)
                 .waitSeconds(delayScoreReady)
@@ -146,14 +135,12 @@ public class AutonSpecimens extends LinearOpMode {
 
         //(10) Attempt specimen hang
         TrajectorySequence trajectory10=robot.drive.trajectorySequenceBuilder(specimenScorePose3)
-                .addDisplacementMarker(() -> {
-                    CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
-                })
                 .waitSeconds(delayScoreAttempt)
                 .build();
 
         //(11) Park
         TrajectorySequence trajectory11=robot.drive.trajectorySequenceBuilder(specimenScorePose3)
+                .lineToLinearHeading(preParkPose)
                 .lineToLinearHeading(parkPose)
                 .build();
 
@@ -178,6 +165,8 @@ public class AutonSpecimens extends LinearOpMode {
         currentState = State.TRAJ_1;
         robot.drive.followTrajectorySequenceAsync(trajectory1);
 
+        boolean actionFlag=false;
+
         while (opModeIsActive() && !isStopRequested()) {
             CommandScheduler.getInstance().run();
 
@@ -189,7 +178,13 @@ public class AutonSpecimens extends LinearOpMode {
                     }
                     break;
                 case TRAJ_2:
+                    if(!actionFlag) {
+                        CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
+                        actionFlag=true;
+                    }
+
                     if(!robot.drive.isBusy()) {
+                        actionFlag=false;
                         currentState= State.TRAJ_3;
                         robot.drive.followTrajectorySequenceAsync(trajectory3);
                     }
@@ -201,7 +196,13 @@ public class AutonSpecimens extends LinearOpMode {
                     }
                     break;
                 case TRAJ_4:
+                    if(!actionFlag) {
+                        CommandScheduler.getInstance().schedule(new AutonSpecimenFloorGrabCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
+                        actionFlag=true;
+                    }
+
                     if(!robot.drive.isBusy()) {
+                        actionFlag=false;
                         currentState= State.TRAJ_5;
                         robot.drive.followTrajectorySequenceAsync(trajectory5);
                     }
@@ -213,7 +214,13 @@ public class AutonSpecimens extends LinearOpMode {
                     }
                     break;
                 case TRAJ_6:
+                    if(!actionFlag) {
+                        CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
+                        actionFlag=true;
+                    }
+
                     if(!robot.drive.isBusy()) {
+                        actionFlag=false;
                         currentState= State.TRAJ_7;
                         robot.drive.followTrajectorySequenceAsync(trajectory7);
                     }
@@ -225,7 +232,13 @@ public class AutonSpecimens extends LinearOpMode {
                     }
                     break;
                 case TRAJ_8:
+                    if(!actionFlag) {
+                        CommandScheduler.getInstance().schedule(new AutonSpecimenFloorGrabCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
+                        actionFlag=true;
+                    }
+
                     if(!robot.drive.isBusy()) {
+                        actionFlag=false;
                         currentState= State.TRAJ_9;
                         robot.drive.followTrajectorySequenceAsync(trajectory9);
                     }
@@ -237,7 +250,13 @@ public class AutonSpecimens extends LinearOpMode {
                     }
                     break;
                 case TRAJ_10:
+                    if(!actionFlag) {
+                        CommandScheduler.getInstance().schedule(new AutonSpecimenHangCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw));
+                        actionFlag=true;
+                    }
+
                     if(!robot.drive.isBusy()) {
+                        actionFlag=false;
                         currentState= State.TRAJ_11;
                         robot.drive.followTrajectorySequenceAsync(trajectory11);
                     }

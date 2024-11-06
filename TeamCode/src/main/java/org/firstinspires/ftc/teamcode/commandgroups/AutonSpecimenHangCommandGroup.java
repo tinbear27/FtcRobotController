@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.subsystems.ClawSubsystem;
 import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 
 public class AutonSpecimenHangCommandGroup extends SequentialCommandGroup {
-    private final int positionNumber = 14; //Basket drop position
+    private final int positionNumber = 5; //Basket drop position
 
     public AutonSpecimenHangCommandGroup(ArmAngleSubsystem armAngle, ArmWinchSubsystem armWinch, WristSubsystem wrist, ClawSubsystem claw) {
 
@@ -22,7 +22,7 @@ public class AutonSpecimenHangCommandGroup extends SequentialCommandGroup {
             new ClawCommand(claw,Constants.Arm.Claw.CLAW_OPEN),
 
             //Go back to travel position, with winch and wrist moving first
-            new ArmPositionCommandGroup(armAngle,0.6,armWinch,0.0,wrist,0.0,null,0.0,1)
+            new ArmPositionCommandGroup(armAngle,0.3,armWinch,0.0,wrist,0.0,null,0.0,1)
         );
 
         addRequirements(armAngle,armWinch,wrist,claw);
