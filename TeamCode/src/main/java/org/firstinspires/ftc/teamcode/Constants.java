@@ -191,7 +191,7 @@ public final class Constants {
                     950,  // [1]  Travel
                     460,  // [2]  Vertical Grab - Ready position
                     220,  // [3]  Vertical Grab - Attempt
-                    1750,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    1820,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
                     1150,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
                     600,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
                     260,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
@@ -200,7 +200,7 @@ public final class Constants {
                     2420,  // [10] High Basket - Drop
                     2460,  // [11] Low Basket - Ready position
                     2460,  // [12] Low Basket - Drop
-                    1750,  // [13] Hang Specimen (High Rung) - Ready position
+                    1820,  // [13] Hang Specimen (High Rung) - Ready position
                     1150,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
                     920,  // [16] Hang Specimen (Low Rung) - Ready position
