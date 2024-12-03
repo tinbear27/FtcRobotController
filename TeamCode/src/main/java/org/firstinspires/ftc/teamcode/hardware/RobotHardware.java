@@ -32,10 +32,12 @@ public class RobotHardware {
     public ClawSubsystem claw;
 
     //Climbers/Lift subystems
+    /*
     public ClimbersSubsystem climbers;
     public LiftSubsystem lift;
     public static Constants.Climbers.CLIMB_STATE climbState= Constants.Climbers.CLIMB_STATE.IDLE;
     public void setClimbState(Constants.Climbers.CLIMB_STATE newClimbState) { climbState=newClimbState; }
+    */
 
     //Limit switches
     public DigitalChannel limitArmAngle;
@@ -73,10 +75,12 @@ public class RobotHardware {
         this.claw = new ClawSubsystem(hardwareMap,telemetry);
 
         //Climber/Lift subsystems
+        /*
         this.climbers = new ClimbersSubsystem(hardwareMap,telemetry);
         climbers.setTarget(0);
         this.lift = new LiftSubsystem(hardwareMap,telemetry);
         lift.setTarget(0);
+        */
 
         //Limit switches
         this.limitArmAngle=hardwareMap.get(DigitalChannel.class,Constants.Sensors.LIMIT_ANGLE_ID);
@@ -115,7 +119,7 @@ public class RobotHardware {
             }
         }
     }
-
+    
     //Re-zero Arm Angle
     public void armAngleZero() {
         if(limitArmAngle.getState()) {

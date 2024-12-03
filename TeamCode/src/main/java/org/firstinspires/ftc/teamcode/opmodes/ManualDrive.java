@@ -35,7 +35,7 @@ public class ManualDrive extends CommandOpMode {
 
     private double loopTime = 0.0, headingTarget=0.0, turnPower=0.0;
     private boolean armAngleModeFixed=false;
-    private Constants.Climbers.CLIMB_STATE currentClimbState;
+    //private Constants.Climbers.CLIMB_STATE currentClimbState;
 
     @Override
     public void initialize() {
@@ -118,6 +118,7 @@ public class ManualDrive extends CommandOpMode {
         );
 
         //Climb - Ready Position (only when in travel position)
+        /*
         gamepadOperator.getGamepadButton(GamepadKeys.Button.BACK).whenPressed(
                 new ConditionalCommand(
                     new ArmPositionCommandGroup(robot.armAngle,robot.armWinch,robot.wrist,robot.claw,19),
@@ -125,6 +126,7 @@ public class ManualDrive extends CommandOpMode {
                     () -> robot.ARM_POSITION==1
                 )
         );
+*/
 
         //Set current arm position to start
         robot.ARM_POSITION=0;
@@ -196,6 +198,7 @@ public class ManualDrive extends CommandOpMode {
         }
 
         //Do not use drivetrain if actively climbing
+        /*
         if (RobotHardware.climbState == Constants.Climbers.CLIMB_STATE.IDLE) {
             robot.drive.setWeightedDrivePower(
                     new Pose2d(input.getX(), input.getY(), turnPower)
@@ -205,12 +208,18 @@ public class ManualDrive extends CommandOpMode {
                     new Pose2d(0.0, 0.0, 0.0)
             );
         }
+*/
+
+        robot.drive.setWeightedDrivePower(
+                new Pose2d(input.getX(), input.getY(), turnPower)
+        );
 
         robot.drive.update();
 
         /* ===== CLIMB OPERATIONS ===== */
 
         //Abort Climb
+        /*
         if (RobotHardware.climbState != Constants.Climbers.CLIMB_STATE.IDLE && gamepad1.start) {
             RobotHardware.getInstance().setClimbState(Constants.Climbers.CLIMB_STATE.IDLE);
             currentClimbState=null;
@@ -285,6 +294,7 @@ public class ManualDrive extends CommandOpMode {
                 );
             }
         }
+*/
 
         /* ===== ARM/HAND/CLAW OPERATIONS ===== */
 
@@ -393,18 +403,20 @@ public class ManualDrive extends CommandOpMode {
         double loop = System.nanoTime();
         telemetry.addData("Loop Speed (hz): ", 1000000000 / (loop - loopTime));
 
-        telemetry.addData("Lift Pos: ", robot.lift.getCurrentPosition());
         telemetry.addData("Global Arm Position: ", robot.ARM_POSITION);
         telemetry.addData("Arm Angle Position: ", robot.armAngle.getPosition());
         telemetry.addData("Arm Angle Target: ", robot.armAngle.getTarget());
         telemetry.addData("Arm Winch Position: ", robot.armWinch.getPosition());
         telemetry.addData("Arm Winch Target: ", robot.armWinch.getTarget());
 
+        /*
+        telemetry.addData("Lift Pos: ", robot.lift.getCurrentPosition());
         telemetry.addData("Climber State: ", RobotHardware.climbState);
         telemetry.addData("Climber Target Pos: ", robot.climbers.getTarget());
         telemetry.addData("Climber (AVG) Pos: ", robot.climbers.getAveragePosition());
         telemetry.addData("Climber (Left) Pos: ", robot.climbers.getLeftPosition());
         telemetry.addData("Climber (Right) Pos: ", robot.climbers.getRightPosition());
+*/
 
         loopTime = loop;
         telemetry.update();

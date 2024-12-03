@@ -16,7 +16,9 @@ import org.firstinspires.ftc.teamcode.subsystems.WristSubsystem;
 public class ClimbHighReadyCommandGroup extends SequentialCommandGroup {
 
     public ClimbHighReadyCommandGroup(ClimbersSubsystem climbers, ArmAngleSubsystem armAngle, ArmWinchSubsystem armWinch, WristSubsystem wrist) {
+/*
         addCommands(
+
                 new ParallelCommandGroup(
                     new ClimbersCommand(climbers,Constants.Climbers.CLIMBER_HIGH_READY_POSITION),
                     new SequentialCommandGroup(
@@ -28,5 +30,6 @@ public class ClimbHighReadyCommandGroup extends SequentialCommandGroup {
         );
 
         addRequirements(climbers,armAngle,armWinch,wrist);
+*/
     }
 }

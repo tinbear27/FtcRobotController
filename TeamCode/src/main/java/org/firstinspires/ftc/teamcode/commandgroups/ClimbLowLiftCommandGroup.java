@@ -15,7 +15,9 @@ import org.firstinspires.ftc.teamcode.subsystems.LiftSubsystem;
 public class ClimbLowLiftCommandGroup extends SequentialCommandGroup {
 
     public ClimbLowLiftCommandGroup(LiftSubsystem lift, ClimbersSubsystem climbers) {
+/*
         addCommands(
+
                 new ClimbersCommand(climbers,Constants.Climbers.CLIMBER_LOW_ENGAGE_POSITION),
                 new ParallelCommandGroup(
                     new LiftCommand(lift, Constants.Lift.LIFT_MIN),
@@ -28,5 +30,6 @@ public class ClimbLowLiftCommandGroup extends SequentialCommandGroup {
         );
 
         addRequirements(lift,climbers);
+*/
     }
 }

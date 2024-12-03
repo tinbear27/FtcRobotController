@@ -17,6 +17,7 @@ public class ClimbHighLiftCommandGroup extends SequentialCommandGroup {
 
     public ClimbHighLiftCommandGroup(ClimbersSubsystem climbers, ArmAngleSubsystem armAngle, ArmWinchSubsystem armWinch, WristSubsystem wrist) {
 
+        /*
             addCommands(
                     new ParallelCommandGroup(
                         new ClimbersCommand(climbers, Constants.Climbers.CLIMBER_START_POSITION),
@@ -29,5 +30,6 @@ public class ClimbHighLiftCommandGroup extends SequentialCommandGroup {
             );
 
             addRequirements(climbers,armAngle,armWinch,wrist);
+*/
     }
 }
