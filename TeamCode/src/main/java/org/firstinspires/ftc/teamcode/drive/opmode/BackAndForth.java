@@ -31,7 +31,7 @@ import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 @Autonomous(group = "RoadRunner Calibration")
 public class BackAndForth extends LinearOpMode {
 
-    public static double DISTANCE = 50;
+    public static double DISTANCE = 90;
 
     @Override
     public void runOpMode() throws InterruptedException {

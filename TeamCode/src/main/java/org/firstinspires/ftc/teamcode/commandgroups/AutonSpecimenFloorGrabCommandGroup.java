@@ -19,7 +19,7 @@ public class AutonSpecimenFloorGrabCommandGroup extends SequentialCommandGroup {
 
         addCommands(
             //Lower arm to grab position
-            new ArmPositionCommandGroup(armAngle,0.0,1000,armWinch,0.0,0,wrist,0.0,claw,0.2,positionNumber),
+            new ArmPositionCommandGroup(armAngle,0.0,1000,armWinch,0.0,0,wrist,0.0,claw,0.25,positionNumber),
 
             //Return to ready position -- DO NOT OPEN CLAW
             new ArmAngleCommand(armAngle,Constants.Arm.Angle.ANGLE_POSITIONS[6]+Constants.Arm.Angle.ANGLE_EXTRA_TICKS_POST_GRAB)

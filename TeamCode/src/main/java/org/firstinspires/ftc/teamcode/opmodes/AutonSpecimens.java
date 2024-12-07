@@ -46,9 +46,9 @@ public class AutonSpecimens extends LinearOpMode {
     Pose2d floorGrabPose=new Pose2d(30.5, -59.5, Math.toRadians(0));
     Pose2d preParkPose=new Pose2d(34, -58, Math.toRadians(90));
     Pose2d parkPose=new Pose2d(57, -60, Math.toRadians(90));
-    Pose2d specimenScorePose1=new Pose2d(-5.5, -31.5, Math.toRadians(90));
-    Pose2d specimenScorePose2=new Pose2d(-3.5, -31.5, Math.toRadians(90));
-    Pose2d specimenScorePose3=new Pose2d(-1.5, -31.5, Math.toRadians(90));
+    Pose2d specimenScorePose1=new Pose2d(-5.5, -35.5, Math.toRadians(90));
+    Pose2d specimenScorePose2=new Pose2d(-3.5, -35.5, Math.toRadians(90));
+    Pose2d specimenScorePose3=new Pose2d(-1.5, -35.5, Math.toRadians(90));
 
     //Define delays for arm actions
     double delayScoreReady=0.2;

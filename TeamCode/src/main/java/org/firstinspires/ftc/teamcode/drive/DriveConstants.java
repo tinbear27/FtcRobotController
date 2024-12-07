@@ -27,12 +27,12 @@ public class DriveConstants {
     public static double GEAR_RATIO = 1; // output (wheel) speed / input (motor) speed
     public static double TRACK_WIDTH = 16.02; // in
 
-    public static double kV = 0.0172;
-    public static double kA = 0.0030;
-    public static double kStatic = 0.005;
+    public static double kV = 0.0165; //Heavy robot was set to 0.0172
+    public static double kA = 0.0030; //Heavy robot was set to 0.0030
+    public static double kStatic = 0.005; //Heavy robot was set to 0.005
 
-    public static double MAX_VEL = 50; //Defaulted to 30; adjusted to 80% of maximum theoretical value
-    public static double MAX_ACCEL = 40; //Defaulted to 30
+    public static double MAX_VEL = 55; //Heavy robot was set to 50
+    public static double MAX_ACCEL = 60; //Heavy robot was set to 40
     public static double MAX_ANG_VEL = 3.05; //In Radians (defaulted to 60 degrees)
     public static double MAX_ANG_ACCEL = 2.7; //In Radians (defaulted to 60 degrees)
 

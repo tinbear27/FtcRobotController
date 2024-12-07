@@ -189,18 +189,18 @@ public final class Constants {
             public static final int[] ANGLE_POSITIONS = new int[] {
                     1050,  // [0]  At rest (start of match)
                     950,  // [1]  Travel
-                    460,  // [2]  Vertical Grab - Ready position
-                    220,  // [3]  Vertical Grab - Attempt
-                    1820,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
-                    1150,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    430,  // [2]  Vertical Grab - Ready position
+                    210,  // [3]  Vertical Grab - Attempt
+                    2000,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    1250,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
                     600,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
-                    260,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
+                    240,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
                     0,  // [8]  (unused)
                     2420,  // [9]  High Basket - Ready position
                     2420,  // [10] High Basket - Drop
                     2460,  // [11] Low Basket - Ready position
                     2460,  // [12] Low Basket - Drop
-                    1820,  // [13] Hang Specimen (High Rung) - Ready position
+                    2000,  // [13] Hang Specimen (High Rung) - Ready position
                     1150,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
                     920,  // [16] Hang Specimen (Low Rung) - Ready position
@@ -236,8 +236,8 @@ public final class Constants {
                     0,  // [1]  Travel
                     500,  // [2]  Vertical Grab - Ready position
                     500,  // [3]  Vertical Grab - Attempt
-                    0,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
-                    0,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    100,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    100,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
                     200,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
                     200,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
                     0,  // [8]  (unused)
@@ -245,8 +245,8 @@ public final class Constants {
                     550,  // [10] High Basket - Drop
                     90,  // [11] Low Basket - Ready position
                     90,  // [12] Low Basket - Drop
-                    0,  // [13] Hang Specimen (High Rung) - Ready position
-                    0,  // [14] Hang Specimen (High Rung) - Attempt
+                    80,  // [13] Hang Specimen (High Rung) - Ready position
+                    80,  // [14] Hang Specimen (High Rung) - Attempt
                     0,  // [15] (unused)
                     0,  // [16] Hang Specimen (Low Rung) - Ready position
                     0,  // [17] Hang Specimen (Low Rung) - Attempt
@@ -280,8 +280,8 @@ public final class Constants {
                     0.85+WRIST_CORRECTION,  // [1]  Travel
                     0.24+WRIST_CORRECTION,  // [2]  Vertical Grab - Ready position
                     0.24+WRIST_CORRECTION,  // [3]  Vertical Grab - Attempt
-                    0.47+WRIST_CORRECTION,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
-                    0.47+WRIST_CORRECTION,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
+                    0.44+WRIST_CORRECTION,  // [4]  [AUTON] Hang Specimen (High Rung) - Ready position
+                    0.44+WRIST_CORRECTION,  // [5]  [AUTON] Hang Specimen (High Rung) - Attempt
                     0.30+WRIST_CORRECTION,  // [6]  [AUTON] Floor Specimen Grab - Ready Position
                     0.30+WRIST_CORRECTION,  // [7]  [AUTON] Floor Specimen Grab - Attempt Grab
                     0.0,  // [8]  (unused)
@@ -310,8 +310,8 @@ public final class Constants {
             public static final String CLAW_ID="ClawServo";
 
             //Preset positions
-            public static final double CLAW_OPEN=0.65;
-            public static final double CLAW_CLOSED=0.42;
+            public static final double CLAW_OPEN=0.63;
+            public static final double CLAW_CLOSED=0.39;
 
             //Time to finish
             public static final double CLAW_SEC_PER_ROTATION=0.66; //Seconds it takes for servo to go from position 0 to 1

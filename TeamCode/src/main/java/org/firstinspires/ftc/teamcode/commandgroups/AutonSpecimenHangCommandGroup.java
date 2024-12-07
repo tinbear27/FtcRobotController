@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.commandgroups;
 
+import com.arcrobotics.ftclib.command.ParallelCommandGroup;
 import com.arcrobotics.ftclib.command.SequentialCommandGroup;
 import com.arcrobotics.ftclib.command.WaitCommand;
 
@@ -17,12 +18,14 @@ public class AutonSpecimenHangCommandGroup extends SequentialCommandGroup {
 
         addCommands(
             //Hang Specimen
-            new ArmPositionCommandGroup(armAngle,armWinch,wrist,null,positionNumber).withTimeout(1200),
-            new WaitCommand(400),
-            new ClawCommand(claw,Constants.Arm.Claw.CLAW_OPEN),
+            new ArmPositionCommandGroup(armAngle,armWinch,wrist,null,positionNumber).withTimeout(800),
+            //new WaitCommand(400),
 
-            //Go back to travel position, with winch and wrist moving first
-            new ArmPositionCommandGroup(armAngle,0.3,armWinch,0.0,wrist,0.0,null,0.0,1)
+            //Open claw and go back to travel position, with winch and wrist moving first
+            new ParallelCommandGroup(
+                new ClawCommand(claw,Constants.Arm.Claw.CLAW_OPEN),
+                new ArmPositionCommandGroup(armAngle,0.3,armWinch,0.0,wrist,0.0,null,0.0,1)
+            )
         );
 
         addRequirements(armAngle,armWinch,wrist,claw);

@@ -51,11 +51,12 @@ public class AutonSamples extends LinearOpMode {
     Pose2d startPose = new Pose2d(-39, -63, Math.toRadians(0));
 
     //Define all trajectory start/end poses
-    Pose2d firstBasketPose=new Pose2d(-57.5, -54.5, Math.toRadians(45));
+    Pose2d firstBasketPose=new Pose2d(-59.5, -54.5, Math.toRadians(45));
     Pose2d basketPose=new Pose2d(-57.5, -54.5, Math.toRadians(45));
-    Pose2d rightSamplePose=new Pose2d(-49.5, -45, Math.toRadians(90));
-    Pose2d centerSamplePose=new Pose2d(-59.5, -45, Math.toRadians(90));
-    Pose2d leftSamplePose=new Pose2d(-59, -42.5, Math.toRadians(118));
+
+    Pose2d rightSamplePose=new Pose2d(-49.5, -43, Math.toRadians(90));
+    Pose2d centerSamplePose=new Pose2d(-59.5, -43, Math.toRadians(90));
+    Pose2d leftSamplePose=new Pose2d(-59, -40.5, Math.toRadians(118));
     Pose2d parkPose=new Pose2d(-28, 0, Math.toRadians(0));
 
     //Define delays for arm actions
